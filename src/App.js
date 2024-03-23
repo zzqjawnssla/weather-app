@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import WeatherBox from "./components/WeatherBox";
 import Buttons from "./components/Buttons";
 
@@ -11,14 +11,14 @@ function App() {
     const [selectedWeather, setSelectedWeather] = useState(null);
 
 
-    const getCurrentLocation = () => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
-            console.log("현재위치", lat, lon);
-            getCurrentWeather(lat, lon);
-        });
-    }
+const getCurrentLocation = useCallback(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        console.log("현재위치", lat, lon);
+        getCurrentWeather(lat, lon);
+    });
+}, []);
     const getCurrentWeather = async (lat, lon) => {
         let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
         let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
@@ -84,19 +84,13 @@ function App() {
         setSelectedWeather(currentWeather);
     }, [currentWeather]);
 
-    useEffect(() => {
-
-
-
-        getCurrentLocation();
-        getCurrentWeather();
-        getJejuWeather();
-        getSantoriniWeather();
-        getParisWeather();
-        getNewyorkWeather();
-
-
-    }, []);
+useEffect(() => {
+    getCurrentLocation();
+    getJejuWeather();
+    getSantoriniWeather();
+    getParisWeather();
+    getNewyorkWeather();
+}, [getCurrentLocation]);
 
 
     //1. APp이 실행되자마자 현재 위치 기반의 날씨가 보인다.(완료)
