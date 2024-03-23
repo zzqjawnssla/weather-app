@@ -1,0 +1,91 @@
+.App {
+    text-align: center;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.box {
+    border: 1px dashed lightslategrey;
+    padding: 20px;
+    width: 1000px;
+    height: 400px;
+    position: absolute;
+    top: 40%;  /* 상단 중앙에 위치하도록 변경 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(40, 40, 40, 0.5);
+    border-radius: 10px;
+    display: flex;  /* 세로 방향으로 중앙에 배치 */
+    flex-direction: column;  /* 자식 요소들이 수직으로 쌓이게 설정 */
+    align-items: center;  /* 세로 방향으로 중앙에 배치 */
+    justify-content: center;  /* 가로 방향으로 중앙에 배치 */
+    text-align: center;  /* 가로 방향으로 중앙에 배치 */
+    font-size: 15px;  /* 폰트 크기를 15px로 설정 */
+}
+
+.buttonBox {
+    border: 1px dashed transparent;
+    justify-content: space-around;
+    padding: 20px;
+    width: 600px;
+    height: 80px;
+    position: absolute;
+    top: 70%;  /* 하단 중앙에 위치하도록 변경 */
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.btn {
+    margin: 10px;
+    width: 100px;
+    height: 50px;
+    font-family: Arial;
+    border-radius: 10px;
+    font-size: 16px;
+    color: black;
+}
+
+.city-name {
+    font-size: 40px;
+}
+
+.temp {
+ font-size: 30px;
+}
+
+.weather-state {
+    font-size: 40px;
+}
