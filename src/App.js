@@ -1,12 +1,14 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useCallback} from "react";
 import WeatherBox from "./components/WeatherBox";
 import Buttons from "./components/Buttons";
 import ClipLoader from "react-spinners/ClipLoader";
 
-function App() {
 
     const cities = ['Jeju', 'Santorini', 'Paris', 'New York'];
     const apiKey = '64502aac4a0827f4b4e102f33b81acbe';
+function App() {
+
+
 
 
     const [city, setCity] = useState(null);
@@ -14,7 +16,11 @@ function App() {
 
     const [loading, setLoading] = useState(false);
 
-    const getCurrentWeather = async (lat, lon) => {
+
+
+
+
+const getCurrentWeather = useCallback(async (lat, lon) => {
     try {
       let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
       let  response = await fetch(url);
@@ -25,34 +31,41 @@ function App() {
     } catch (error) {
       setLoading(false);
     }
-  };
+}, []);
 
-
-    const getCurrentLocation = () => {
+const getCurrentLocation = useCallback(() => {
     navigator.geolocation.getCurrentPosition((position) => {
       const { latitude, longitude } = position.coords;
       getCurrentWeather(latitude, longitude);
     });
-  };
+}, [getCurrentWeather]);
 
-
-    const getWeatherCity = async () => {
-        try {
-            let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-            setLoading(true);
-            let response = await fetch(url);
-            let data = await response.json();
-            setWeather(data);
-            setLoading(false);
-        }
-        catch (error) {
-            setLoading(false);
-        }
+const getWeatherCity = useCallback(async () => {
+    try {
+        let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+        setLoading(true);
+        let response = await fetch(url);
+        let data = await response.json();
+        setWeather(data);
+        setLoading(false);
     }
+    catch (error) {
+        setLoading(false);
+    }
+}, [city]);
+
+useEffect(() => {
+    if (city == null) {
+        setLoading(true);
+        getCurrentLocation();
+    } else {
+        setLoading(true);
+        getWeatherCity();
+    }
+}, [city, getCurrentLocation, getWeatherCity]);
 
 
-
-    const handleCityChange = (city) => {
+        const handleCityChange = (city) => {
     if (city === "current") {
       setCity(null);
     } else {
@@ -60,16 +73,6 @@ function App() {
     }
   };
 
-
-    useEffect(() => {
-     if (city == null) {
-       setLoading(true);
-       getCurrentLocation();
-     } else {
-    setLoading(true);
-    getWeatherCity();
-     }
-  }, [city]);
 
 
     //1. APp이 실행되자마자 현재 위치 기반의 날씨가 보인다.(완료)
