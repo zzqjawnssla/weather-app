@@ -1,96 +1,75 @@
-import {useState, useEffect, useCallback} from "react";
+import {useState, useEffect} from "react";
 import WeatherBox from "./components/WeatherBox";
 import Buttons from "./components/Buttons";
+import ClipLoader from "react-spinners/ClipLoader";
 
 function App() {
-    const [currentWeather, setCurrentWeather] = useState(null);
-    const [jejuweather, setJejuweather] = useState(null);
-    const [santoriniweather, setSantoriniweather] = useState(null);
-    const [parisweather, setParisweather] = useState(null);
-    const [newyorkweather, setNewyorkweather] = useState(null);
-    const [selectedWeather, setSelectedWeather] = useState(null);
+
+    const cities = ['Jeju', 'Santorini', 'Paris', 'New York'];
+    const apiKey = '64502aac4a0827f4b4e102f33b81acbe';
 
 
-const getCurrentLocation = useCallback(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-        let lat = position.coords.latitude;
-        let lon = position.coords.longitude;
-        console.log("현재위치", lat, lon);
-        getCurrentWeather(lat, lon);
-    });
-}, []);
+    const [city, setCity] = useState(null);
+    const [weather, setWeather] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+
     const getCurrentWeather = async (lat, lon) => {
-        let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
-        let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    try {
+      let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+      let  response = await fetch(url);
+      let data = await response.json();
 
-        let response = await fetch(url);
-        let data = await response.json();
-        console.log(data);
-        setCurrentWeather(data);
+      setWeather(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  };
 
+
+    const getCurrentLocation = () => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      const { latitude, longitude } = position.coords;
+      getCurrentWeather(latitude, longitude);
+    });
+  };
+
+
+    const getWeatherCity = async () => {
+        try {
+            let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            setLoading(true);
+            let response = await fetch(url);
+            let data = await response.json();
+            setWeather(data);
+            setLoading(false);
+        }
+        catch (error) {
+            setLoading(false);
+        }
     }
 
-    const getJejuWeather = async () => {
 
-        let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
-        let cityName = 'Jeju';
 
-        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
-        let response = await fetch(url);
-        let data = await response.json();
-        console.log(data);
-        setJejuweather(data);
-
+    const handleCityChange = (city) => {
+    if (city === "current") {
+      setCity(null);
+    } else {
+      setCity(city);
     }
+  };
 
-    const getSantoriniWeather = async () => {
 
-        let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
-        let cityName = 'Santorini';
-
-        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
-        let response = await fetch(url);
-        let data = await response.json();
-        console.log(data);
-        setSantoriniweather(data);
-    }
-
-    const getParisWeather = async () => {
-
-        let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
-        let cityName = 'Paris';
-
-        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
-        let response = await fetch(url);
-        let data = await response.json();
-        console.log(data);
-        setParisweather(data);
-    }
-
-    const getNewyorkWeather = async () => {
-
-        let apiKey = '64502aac4a0827f4b4e102f33b81acbe';
-        let cityName = 'New York';
-
-        let url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${apiKey}&units=metric`;
-        let response = await fetch(url);
-        let data = await response.json();
-        console.log(data);
-        setNewyorkweather(data);
-
-    }
-
-        useEffect(() => {
-        setSelectedWeather(currentWeather);
-    }, [currentWeather]);
-
-useEffect(() => {
-    getCurrentLocation();
-    getJejuWeather();
-    getSantoriniWeather();
-    getParisWeather();
-    getNewyorkWeather();
-}, [getCurrentLocation]);
+    useEffect(() => {
+     if (city == null) {
+       setLoading(true);
+       getCurrentLocation();
+     } else {
+    setLoading(true);
+    getWeatherCity();
+     }
+  }, [city]);
 
 
     //1. APp이 실행되자마자 현재 위치 기반의 날씨가 보인다.(완료)
@@ -105,20 +84,29 @@ useEffect(() => {
     // current api : https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
     //city api : https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
 
-    return (
-        <div>
-            {selectedWeather && <WeatherBox selectedWeather={selectedWeather}/>}
-            <Buttons
-                currentWeather={currentWeather}
-                jejuWeather={jejuweather}
-                santoriniWeather={santoriniweather}
-                parisWeather={parisweather}
-                newYorkWeather={newyorkweather}
-                setSelectedWeather={setSelectedWeather}
-            />
+return (
+    <div>
+        {loading ? (
+            <div className="spinner">
+                <ClipLoader
+                    color="#f88c6b"
+                    loading={loading}
+                    size={150}
+                />
+            </div>
+        ) : (
+            <div>
+                <WeatherBox weather={weather}/>
+            </div>
+        )}
+        <Buttons
+            cities={cities}
+            handleCityChange={handleCityChange}
+            setCity={setCity}
+        />
+    </div>
+);
 
-        </div>
-    );
 }
 
 export default App;

@@ -1,10 +1,10 @@
 import React from 'react'
 
-const WeatherBox = ({selectedWeather}) => {
-    const cityName = selectedWeather?.name;
-    const tempCelsius = selectedWeather?.main?.temp;
+const WeatherBox = ({weather}) => {
+    const cityName = weather?.name;
+    const tempCelsius = weather?.main?.temp;
     const tempFahrenheit = tempCelsius ? tempCelsius * 9/5 + 32 : null;  // 섭씨를 화씨로 변환
-    const weatherState = selectedWeather?.weather?.[0]?.description;
+    const weatherState = weather?.weather?.[0]?.description;
 
     return (
         <div className='box'>

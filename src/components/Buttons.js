@@ -1,37 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 import '../App.css';
 
-const Buttons = ({currentWeather, jejuWeather, santoriniWeather, parisWeather, newYorkWeather, setSelectedWeather}) => {
+const Buttons = ({cities,setCity, handleCityChange}) => {
+    const [selectedCity, setSelectedCity] = useState(null);
 
-    const handleCurrentWeatherClick = () => {
-        setSelectedWeather(currentWeather);
-    }
-
-    const handleJejuWeatherClick = () => {
-        setSelectedWeather(jejuWeather);
-    }
-
-    const handleSantoriniWeatherClick = () => {
-        setSelectedWeather(santoriniWeather);
-    }
-
-    const handleParisWeatherClick = () => {
-        setSelectedWeather(parisWeather);
-    }
-
-    const handleNewYorkWeatherClick = () => {
-        setSelectedWeather(newYorkWeather);
+    const handleClick = (city) => {
+        setCity(city);
+        setSelectedCity(city);
     }
 
     return (
-        <div className='buttonBox'>
-            <button className='btn' onClick={handleCurrentWeatherClick}>현재 지역</button>
-            <button className='btn' onClick={handleJejuWeatherClick}>Jeju </button>
-            <button className='btn' onClick={handleSantoriniWeatherClick}>Santorini </button>
-            <button className='btn' onClick={handleParisWeatherClick}>Paris </button>
-            <button className='btn' onClick={handleNewYorkWeatherClick}>New York </button>
-        </div>
-    );
+    <div className='buttonBox'>
+        <button
+            onClick={() => {
+                handleCityChange("current");
+                setSelectedCity("current");
+            }}
+            className={selectedCity === "current" ? 'btn selected' : 'btn'}
+        >
+            현재 위치
+        </button>
+        {cities.map((item,index) => (
+            <button
+                className={selectedCity === item ? 'btn selected' : 'btn'}
+                key={index}
+                onClick={()=> handleClick(item)}
+            >
+                {item}
+            </button>
+        ))}
+    </div>
+)
 }
 
 export default Buttons;
