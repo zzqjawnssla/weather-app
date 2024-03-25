@@ -22,7 +22,7 @@ function App() {
 
 const getCurrentWeather = useCallback(async (lat, lon) => {
     try {
-      let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+      let url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
       let  response = await fetch(url);
       let data = await response.json();
 
